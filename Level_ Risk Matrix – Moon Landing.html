@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Level: Risk Matrix – Moon Landing</title>
+<style>
+:root{--bg:#f6f5f1;--fg:#1f2328;--card:#fff;--mut:#6a7079;--acc:#2f6fed;--bd:#dcdad3;--g:#cfeedd;--a:#fbe9c2;--r:#f6cccc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101319;--fg:#e9eaec;--card:#1a1e25;--mut:#9aa1ab;--bd:#343945;--acc:#6b98ff;--g:#1d4030;--a:#4a3b17;--r:#4d2222}}
+:root[data-theme="dark"]{--bg:#101319;--fg:#e9eaec;--card:#1a1e25;--mut:#9aa1ab;--bd:#343945;--acc:#6b98ff;--g:#1d4030;--a:#4a3b17;--r:#4d2222}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 system-ui,-apple-system,sans-serif}
+main{max-width:600px;margin:0 auto;padding:16px 14px 40px}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:18px;margin:0 0 6px}.mut{color:var(--mut);font-size:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin:12px 0;animation:in .4s both}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+button{font:inherit;cursor:pointer;border:1px solid var(--bd);background:var(--card);color:var(--fg);border-radius:10px;padding:10px 12px;width:100%;text-align:left;margin:5px 0}
+button.p{background:var(--acc);color:#fff;border:0;text-align:center;font-weight:600}button:disabled{opacity:.4;cursor:default}
+.wrap{display:grid;grid-template-columns:22px 1fr;gap:4px}
+.yl{writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;font-size:12px;color:var(--mut)}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.cell{aspect-ratio:1;border-radius:8px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:2px;cursor:pointer;border:2px solid transparent}
+.cell.g{background:var(--g)}.cell.a{background:var(--a)}.cell.r{background:var(--r)}.cell:hover{border-color:var(--acc)}
+.pin{width:22px;height:22px;border-radius:50%;background:var(--acc);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;animation:pop .35s cubic-bezier(.3,1.8,.5,1)}
+.pin.t{background:transparent;color:var(--fg);border:2px dashed var(--fg);animation:pulse 1.2s infinite}
+@keyframes pop{from{transform:scale(0)}}@keyframes pulse{50%{transform:scale(1.2)}}
+.pin{cursor:help}table{width:100%;border-collapse:collapse;font-size:13px}td,th{border-top:1px solid var(--bd);padding:4px 6px;text-align:left;vertical-align:top}summary{cursor:pointer}.chip{display:inline-block;font-size:12px;border-radius:12px;padding:1px 8px;margin-top:3px;color:var(--fg)}.chip.g{background:var(--g)}.chip.a{background:var(--a)}.chip.r{background:var(--r)}
+#tip{position:fixed;z-index:50;max-width:230px;background:#1f2328;color:#fff;font-size:13px;line-height:1.35;padding:8px 10px;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.35);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}
+#tip.on{opacity:1;transform:none}
+.xl{text-align:center;font-size:12px;color:var(--mut);margin-top:4px}
+.rk{display:flex;gap:8px;align-items:center;border:1px solid var(--bd);border-radius:10px;padding:8px 10px;margin:6px 0;cursor:pointer;animation:slide .5s both}
+@keyframes slide{from{opacity:0;transform:translateX(-30px)}}
+.rk.sel{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc)}.rk.done .n{background:#2e9e5b}
+.n{flex:none;width:24px;height:24px;border-radius:50%;background:var(--mut);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.fb{border-left:4px solid var(--acc);padding:4px 12px;margin:10px 0}
+.sky{height:230px;border-radius:14px;background:linear-gradient(#0a0e2a,#1d2a5c);position:relative;overflow:hidden}
+.moon{position:absolute;bottom:0;left:0;right:0;height:38px;background:#9a9aa5;border-radius:50% 50% 0 0/100% 100% 0 0}
+.rocket{position:absolute;left:50%;bottom:30px;width:40px;margin-left:-20px;font-size:34px;text-align:center}
+.go .rocket{animation:fly 3.2s ease-in forwards}.bad .rocket{animation:crash 3.4s ease-in forwards}
+@keyframes fly{0%{transform:translateY(0)}45%{transform:translateY(-170px) scale(.7)}100%{transform:translateY(-4px) scale(1)}}
+@keyframes crash{0%{transform:translateY(0)}45%{transform:translateY(-170px) scale(.7)}100%{transform:translate(70px,-6px) rotate(110deg)}}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:tw 2s infinite}@keyframes tw{50%{opacity:.2}}
+</style></head><body><main id="app"></main>
+<script>
+// Risks inspired by lunar-lander missions such as Chandrayaan-3 (illustrative, not an official risk register)
+const R=[
+{t:"Landing software can't correct unexpected deviations during descent",p:3,i:5},
+{t:"Landing area has boulders or steep slopes",p:4,i:4},
+{t:"Altimeter gives a faulty reading near the surface",p:2,i:5},
+{t:"Use of an unproven new engine design",p:3,i:4},
+{t:"Ground communication drops during critical phase",p:2,i:4},
+{t:"Component supplier delivers late",p:3,i:3},
+{t:"Redesign causes a budget overrun",p:3,i:3},
+{t:"Bad weather delays the launch window",p:4,i:2},
+{t:"A key engineer leaves the team",p:2,i:3}];
+// Response questions for the 3 highest-exposure risks
+const Q=[
+{r:1,a:["Avoid: pick another mission goal","Mitigate: widen landing area and add hazard-detection sensors","Transfer: insure the lander","Accept: nothing to do"],c:1,f:"Mitigate. Redesigning for a larger safe zone and better sensors cuts the probability and impact. This mirrors the lesson of learning from the earlier lander failure."},
+{r:0,a:["Accept: it is unlikely to happen","Transfer: outsource blame to the vendor","Mitigate: run thousands of simulated descents and add tolerance to errors","Avoid: skip the landing and only orbit"],c:2,f:"Mitigate. Simulation and 'design for failure' testing find weaknesses cheaply, long before the real landing."},
+{r:3,a:["Avoid: use a flight-proven engine design","Accept: test it on launch day","Mitigate: hope it works","Transfer: ask the supplier to promise reliability"],c:0,f:"Avoid. When a risk can be removed entirely at low cost, eliminating it is the strongest response."}];
+let S={};const $=x=>document.getElementById(x);
+const zone=(p,i)=>p*i>=15?"r":p*i>=8?"a":"g";
+const lvl=s=>s>=15?"High":s>=8?"Medium":"Low";
+const PL=[["Rare","under 10% chance"],["Unlikely","10-30%"],["Possible","30-50%"],["Likely","50-80%"],["Almost certain","over 80%"]];
+const IL=[["Negligible","barely noticeable, absorbed by the team"],["Minor","small delay or cost, mission unaffected"],["Moderate","noticeable delay or cost, goals still met"],["Major","key objectives at risk, large cost or delay"],["Severe","mission failure or loss of the lander"]];
+const defs=()=>`<details class="card" open><summary><b>📖 How to score a risk</b></summary>
+<p class="mut"><b>Probability</b> = how likely the risk is to happen. <b>Impact</b> = how badly it hurts the mission if it does. <b>Score (exposure)</b> = Probability × Impact, from 1 to 25. Low: 1-7 · Medium: 8-14 · High: 15-25.</p>
+<table><tr><th>P</th><th>Probability</th><th>I</th><th>Impact</th></tr>${PL.map((p,k)=>`<tr><td>${k+1}</td><td><b>${p[0]}</b><br><span class="mut">${p[1]}</span></td><td>${k+1}</td><td><b>${IL[k][0]}</b><br><span class="mut">${IL[k][1]}</span></td></tr>`).join("")}</table>
+<p class="mut">Hover or tap a cell to see its score.</p></details>`;
+function grid(mode){let h='<div class="wrap"><div class="yl">IMPACT 1→5</div><div><div class="grid">';
+for(let i=5;i>=1;i--)for(let p=1;p<=5;p++){
+let pins="";R.forEach((r,k)=>{if(S.pl[k]&&S.pl[k][0]==p&&S.pl[k][1]==i)pins+=`<div class="pin" data-tip="${mode=="rev"?"Your placement: ":""}${k+1}. ${r.t}">${k+1}</div>`;
+if(mode=="rev"&&r.p==p&&r.i==i)pins+=`<div class="pin t" data-tip="Expert placement: ${k+1}. ${r.t} (P${r.p} × I${r.i} = ${r.p*r.i})">${k+1}</div>`});
+h+=`<div class="cell ${zone(p,i)}" data-tip="Probability ${p} (${PL[p-1][0]}) × Impact ${i} (${IL[i-1][0]}) = Score ${p*i}: ${lvl(p*i)} exposure" ${mode=="play"?`onclick="put(${p},${i})"`:""}>${pins}</div>`}
+return h+'</div><div class="xl">PROBABILITY 1→5</div></div></div>'}
+function intro(){$("app").innerHTML=`<h1>🚀 Level: Risk Matrix</h1><div class="mut">Mission: land a rover on the Moon</div>
+<div class="card"><h2>Your job</h2><p>Your space agency is planning a lunar landing, inspired by missions like <b>Chandrayaan-3</b>. An earlier lander was lost during descent, so leadership wants a proper risk assessment before launch.</p>
+<p>1️⃣ Place each risk on the <b>probability × impact</b> matrix.<br>2️⃣ Choose the best response for the top risks.<br>3️⃣ Launch and see how your plan holds up.</p>
+<button class="p" onclick="play()">Start assessment</button></div>`}
+function play(){S={pl:{},sel:null};draw()}
+function draw(){const n=Object.keys(S.pl).length;
+$("app").innerHTML=`<h1>Step 1: Place the risks</h1><p class="mut">Tap a risk, then tap a matrix cell. Green = low, amber = medium, red = high exposure.</p>
+${defs()}<div class="card">${grid("play")}</div>
+<div class="card"><h2>Risks (${n}/${R.length} placed)</h2>${R.map((r,k)=>`<div class="rk ${S.sel===k?"sel":""} ${S.pl[k]?"done":""}" style="animation-delay:${k*70}ms" onclick="sel(${k})"><span class="n">${k+1}</span><span>${r.t}${S.pl[k]?`<br><span class="chip ${zone(...S.pl[k])}">P${S.pl[k][0]} × I${S.pl[k][1]} = ${S.pl[k][0]*S.pl[k][1]} · ${lvl(S.pl[k][0]*S.pl[k][1])}</span>`:""}</span></div>`).join("")}
+<button class="p" ${n<R.length?"disabled":""} onclick="reveal()">Check my matrix</button></div>`}
+function sel(k){S.sel=k;draw()}
+function put(p,i){if(S.sel===null)return;S.pl[S.sel]=[p,i];S.sel=null;draw()}
+function reveal(){let tot=0,rows="";R.forEach((r,k)=>{const d=Math.abs(S.pl[k][0]-r.p)+Math.abs(S.pl[k][1]-r.i);const pts=Math.max(0,1-d/4);tot+=pts;
+rows+=`<div class="mut">${k+1}. ${d==0?"✅ Exact":d<=1?"🟡 Close":"❌ Off"} (true: P${r.p}, I${r.i})</div>`});
+S.pp=tot/R.length;
+$("app").innerHTML=`<h1>Matrix review</h1><div class="card">${grid("rev")}<p class="mut">Filled = your placement. Dashed = expert placement.</p>${rows}<p><b>Accuracy: ${Math.round(S.pp*100)}%</b></p>
+<div class="fb">Exposure = probability × impact. Low-probability, high-impact risks (like a faulty altimeter) can be more dangerous than they look, while frequent, low-impact risks (weather delays) rarely sink a mission.</div>
+<button class="p" onclick="S.q=0;S.ok=0;ask()">Next: choose responses</button></div>`}
+function ask(){const q=Q[S.q],r=R[q.r];
+$("app").innerHTML=`<h1>Step 2: Respond (${S.q+1}/3)</h1><div class="card"><span class="mut">Top-exposure risk</span><h2>${r.t}</h2><p class="mut">Probability ${r.p} × Impact ${r.i} = ${r.p*r.i}</p>${q.a.map((a,i)=>`<button onclick="ans(${i})">${a}</button>`).join("")}</div>`}
+function ans(i){const q=Q[S.q],ok=i==q.c;if(ok)S.ok++;
+$("app").innerHTML=`<h1>${ok?"✅ Good call":"⚠️ Not the best fit"}</h1><div class="card"><div class="fb">${q.f}</div><button class="p" onclick="${S.q<2?"S.q++;ask()":"launch()"}">${S.q<2?"Next risk":"🚀 Launch!"}</button></div>`}
+function launch(){S.score=Math.round((S.pp*0.6+S.ok/3*0.4)*100);const win=S.score>=65;
+let st="";for(let i=0;i<30;i++)st+=`<div class="star" style="left:${Math.random()*100}%;top:${Math.random()*70}%;animation-delay:${Math.random()*2}s"></div>`;
+$("app").innerHTML=`<h1>Launch day</h1><div class="sky ${win?"go":"bad"}">${st}<div class="rocket">🚀</div><div class="moon"></div></div>
+<div class="card" style="animation-delay:3.4s"><h2>${win?"🌕 Soft landing! Mission success":"💥 Lander lost on descent"}</h2><p>Risk score: <b>${S.score}/100</b> (matrix accuracy ${Math.round(S.pp*100)}%, responses ${S.ok}/3)</p>
+<p class="mut">${win?"Your team found the real threats early and responded well.":"Unaddressed high-exposure risks caught up with the mission. Review the matrix and try again."}</p>
+<button class="p" onclick="play()">Play again</button></div>`}
+const tip=document.createElement("div");tip.id="tip";document.body.appendChild(tip);
+function showTip(el){tip.textContent=el.dataset.tip;tip.classList.add("on");
+const r=el.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;
+let x=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2)),y=r.top-h-8;if(y<8)y=r.bottom+8;
+tip.style.left=x+"px";tip.style.top=y+"px"}
+const hideTip=()=>tip.classList.remove("on");
+document.addEventListener("mouseover",e=>{const p=e.target.closest(".pin,.cell");p?showTip(p):hideTip()});
+document.addEventListener("click",e=>{const p=e.target.closest(".pin,.cell");p&&document.contains(p)?showTip(p):hideTip()});
+document.addEventListener("scroll",hideTip,true);
+intro();
+</script></body></html>
